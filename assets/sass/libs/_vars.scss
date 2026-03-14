@@ -10,7 +10,7 @@
 
 // Size.
 	$size: (
-		navPanel: 50vh
+		navPanel: fit-content /* panel height; page/button offset overridden to 120px in main.scss */
 	);
 
 // Font.

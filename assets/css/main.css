@@ -2961,16 +2961,16 @@ display: block;
 				-webkit-backface-visibility: hidden;
 				-ms-backface-visibility: hidden;
 				backface-visibility: hidden;
-				-moz-transform: translateY(-50vh);
-				-webkit-transform: translateY(-50vh);
-				-ms-transform: translateY(-50vh);
-				transform: translateY(-50vh);
+				-moz-transform: translateY(-100%);
+				-webkit-transform: translateY(-100%);
+				-ms-transform: translateY(-100%);
+				transform: translateY(-100%);
 				-moz-transition: -moz-transform 0.5s ease;
 				-webkit-transition: -webkit-transform 0.5s ease;
 				-ms-transition: -ms-transform 0.5s ease;
 				transition: transform 0.5s ease;
 				display: block;
-				height: 50vh;
+				height: fit-content;
 				left: 0;
 				overflow-y: auto;
 				position: fixed;
@@ -3044,17 +3044,17 @@ display: block;
 				}
 
 			body.navPanel-visible #page-wrapper {
-				-moz-transform: translateY(50vh);
-				-webkit-transform: translateY(50vh);
-				-ms-transform: translateY(50vh);
-				transform: translateY(50vh);
+				-moz-transform: translateY(120px);
+				-webkit-transform: translateY(120px);
+				-ms-transform: translateY(120px);
+				transform: translateY(120px);
 			}
 
 			body.navPanel-visible #navButton {
-				-moz-transform: translateY(50vh);
-				-webkit-transform: translateY(50vh);
-				-ms-transform: translateY(50vh);
-				transform: translateY(50vh);
+				-moz-transform: translateY(120px);
+				-webkit-transform: translateY(120px);
+				-ms-transform: translateY(120px);
+				transform: translateY(120px);
 			}
 
 			body.navPanel-visible #navPanel {
@@ -3378,8 +3378,8 @@ body.homepage #header .inner {
 
 .img-miguel {
 	display: inline-block !important;
-	width: 220px !important;
-	height: 220px !important;
+	width: 300px !important;
+	height: 300px !important;
 	object-fit: cover;
 	border-radius: 50%;
 	border: 4px solid rgba(255, 255, 255, 0.25);
@@ -3448,7 +3448,7 @@ body.homepage #header .inner {
 .skills li h4 {
 	color: #555;
 	font-weight: 600;
-	font-size: 0.9em;
+	font-size: 0.8em;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 }
@@ -3547,8 +3547,8 @@ dt {
 @media screen and (max-width: 736px) {
 
 	.img-miguel {
-		width: 160px !important;
-		height: 160px !important;
+		width: 300px !important;
+		height: 300px !important;
 	}
 
 	.skills li .rat0,
