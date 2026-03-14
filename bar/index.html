@@ -1,0 +1,86 @@
+<html>
+<head>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+ <style>
+    header{
+      top: 0px;
+      background-color:#000;
+      height: 50px;
+      color:#fff;
+      text-align:center;
+    }
+
+  .exampleDiv1, .exampleDiv2, .exampleDiv3{
+    background-color: #fff;
+    text-align:center;
+    padding: 250px 0px 250px 0px;
+  }
+
+  .exampleDiv2{
+    background-color: blue;
+    color:#fff;
+  }
+
+  footer{
+    height: 50px;
+    background-color:#000;
+    color:#fff;
+    text-align:center;
+  }
+
+  .bar-info {
+    height: 70px;
+    background-color: #e1411d;
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    color:#fff;
+    z-index: 9;
+}
+
+.bar-info i.fa.fa-times {
+    float: left;
+    margin-top: 3px;
+    color: #fff;
+    margin-left: 10px;
+    position: absolute;
+}
+
+ </style>
+
+<title>Bar information in website with Jquery</title>
+</head>
+
+<body>
+<header>
+  <center><p>Head</p></center>
+</header>
+
+<!-- div example 1 -->
+<div class="exampleDiv1">DIV 1</div>
+<!-- div example 2 -->
+<div class="exampleDiv2">DIV 2</div>
+<!-- div example 3 -->
+<div class="exampleDiv3">DIV 3</div>
+
+<div class="bar-info">
+  <div class="container">
+    <div class="row">
+      <center> <p class="bar-info-text">Bar Information<a href="#close" class="important-container-close"><i class="close-bar fa fa-times" aria-hidden="true"></i></a></p></center>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <center><p>Footer</p></center>
+</footer>
+
+<script>
+$(".close-bar").on("click", function(event) {
+  $(".bar-info").fadeOut();
+});
+</script>
+</body>
+</html>
