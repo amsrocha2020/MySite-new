@@ -1,249 +1,121 @@
-/*
-	Helios by HTML5 UP
-	html5up.net | @n33co
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
+(function () {
+	'use strict';
 
-(function($) {
+	// ---- Theme toggle ----
+	var root = document.documentElement;
+	var themeToggle = document.getElementById('theme-toggle');
+	var storedTheme = null;
+	try { storedTheme = localStorage.getItem('theme'); } catch (e) {}
+	if (storedTheme === 'light' || storedTheme === 'dark') {
+		root.setAttribute('data-theme', storedTheme);
+	}
 
-	var settings = {
+	if (themeToggle) {
+		themeToggle.addEventListener('click', function () {
+			var current = root.getAttribute('data-theme');
+			var isLight = current === 'light' || (!current && window.matchMedia('(prefers-color-scheme: light)').matches);
+			var next = isLight ? 'dark' : 'light';
+			root.setAttribute('data-theme', next);
+			try { localStorage.setItem('theme', next); } catch (e) {}
+		});
+	}
 
-		// Carousels
-			carousels: {
-				speed: 4,
-				fadeIn: true,
-				fadeDelay: 250
-			},
+	// ---- Mobile nav ----
+	var navToggle = document.getElementById('nav-toggle');
+	var nav = document.getElementById('nav');
+	if (navToggle && nav) {
+		navToggle.addEventListener('click', function () {
+			var isOpen = nav.classList.toggle('open');
+			navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+			navToggle.querySelector('.fa').className = 'fa ' + (isOpen ? 'fa-times' : 'fa-bars');
+		});
+		nav.querySelectorAll('a').forEach(function (link) {
+			link.addEventListener('click', function () {
+				nav.classList.remove('open');
+				navToggle.setAttribute('aria-expanded', 'false');
+				navToggle.querySelector('.fa').className = 'fa fa-bars';
+			});
+		});
+	}
 
-	};
-
-	skel.breakpoints({
-		wide: '(max-width: 1680px)',
-		normal: '(max-width: 1280px)',
-		narrow: '(max-width: 960px)',
-		narrower: '(max-width: 840px)',
-		mobile: '(max-width: 736px)'
+	// ---- Active nav link ----
+	var currentPage = location.pathname.split('/').pop() || 'index.html';
+	document.querySelectorAll('#nav a').forEach(function (link) {
+		var href = link.getAttribute('href');
+		if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+			link.classList.add('active');
+		}
 	});
 
-	$(function() {
-
-		var	$window = $(window),
-			$body = $('body');
-
-		// Disable animations/transitions until the page has loaded.
-			$body.addClass('is-loading');
-
-			$window.on('load', function() {
-				$body.removeClass('is-loading');
+	// ---- Scroll reveal ----
+	var revealEls = document.querySelectorAll('.reveal');
+	if ('IntersectionObserver' in window && revealEls.length) {
+		var observer = new IntersectionObserver(function (entries) {
+			entries.forEach(function (entry) {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('is-visible');
+					observer.unobserve(entry.target);
+				}
 			});
+		}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+		revealEls.forEach(function (el) { observer.observe(el); });
+	} else {
+		revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+	}
 
-		// CSS polyfills (IE<9).
-			if (skel.vars.IEVersion < 9)
-				$(':last-child').addClass('last-child');
+	// ---- Lightbox ----
+	var lightbox = document.getElementById('lightbox');
+	if (lightbox) {
+		var lightboxImg = lightbox.querySelector('img');
+		var lightboxCaption = lightbox.querySelector('.lightbox-caption');
+		var groups = {};
+		var currentGroup = null;
+		var currentIndex = 0;
 
-		// Fix: Placeholder polyfill.
-			$('form').placeholder();
-
-		// Prioritize "important" elements on mobile.
-			skel.on('+mobile -mobile', function() {
-				$.prioritize(
-					'.important\\28 mobile\\29',
-					skel.breakpoint('mobile').active
-				);
+		document.querySelectorAll('[data-lightbox]').forEach(function (btn) {
+			var group = btn.getAttribute('data-lightbox');
+			groups[group] = groups[group] || [];
+			groups[group].push(btn);
+			btn.addEventListener('click', function () {
+				currentGroup = group;
+				currentIndex = groups[group].indexOf(btn);
+				showLightbox();
 			});
+		});
 
-		// Dropdowns.
-			$('#nav > ul').dropotron({
-				mode: 'fade',
-				speed: 350,
-				noOpenerFade: true,
-				alignment: 'center'
-			});
+		function showLightbox() {
+			var btn = groups[currentGroup][currentIndex];
+			var src = btn.getAttribute('data-src') || btn.querySelector('img').src;
+			var caption = btn.getAttribute('data-title') || '';
+			lightboxImg.src = src;
+			lightboxImg.alt = caption;
+			lightboxCaption.textContent = caption;
+			lightbox.classList.add('open');
+			document.body.style.overflow = 'hidden';
+		}
 
-		// Scrolly links.
-			$('.scrolly').scrolly();
+		function closeLightbox() {
+			lightbox.classList.remove('open');
+			document.body.style.overflow = '';
+		}
 
-		// Off-Canvas Navigation.
+		function step(delta) {
+			var items = groups[currentGroup];
+			currentIndex = (currentIndex + delta + items.length) % items.length;
+			showLightbox();
+		}
 
-			// Navigation Button.
-				$(
-					'<div id="navButton">' +
-						'<a href="#navPanel" class="toggle"></a>' +
-					'</div>'
-				)
-					.appendTo($body);
-
-			// Navigation Panel.
-				$(
-					'<div id="navPanel">' +
-						'<nav>' +
-							$('#nav').navList() +
-						'</nav>' +
-					'</div>'
-				)
-					.appendTo($body)
-					.panel({
-						delay: 500,
-						hideOnClick: true,
-						hideOnSwipe: true,
-						resetScroll: true,
-						resetForms: true,
-						target: $body,
-						visibleClass: 'navPanel-visible'
-					});
-
-			// Fix: Remove navPanel transitions on WP<10 (poor/buggy performance).
-				if (skel.vars.os == 'wp' && skel.vars.osVersion < 10)
-					$('#navButton, #navPanel, #page-wrapper')
-						.css('transition', 'none');
-
-		// Carousels.
-			$('.carousel').each(function() {
-
-				var	$t = $(this),
-					$forward = $('<span class="forward"></span>'),
-					$backward = $('<span class="backward"></span>'),
-					$reel = $t.children('.reel'),
-					$items = $reel.children('article');
-
-				var	pos = 0,
-					leftLimit,
-					rightLimit,
-					itemWidth,
-					reelWidth,
-					timerId;
-
-				// Items.
-					if (settings.carousels.fadeIn) {
-
-						$items.addClass('loading');
-
-						$t.onVisible(function() {
-							var	timerId,
-								limit = $items.length - Math.ceil($window.width() / itemWidth);
-
-							timerId = window.setInterval(function() {
-								var x = $items.filter('.loading'), xf = x.first();
-
-								if (x.length <= limit) {
-
-									window.clearInterval(timerId);
-									$items.removeClass('loading');
-									return;
-
-								}
-
-								if (skel.vars.IEVersion < 10) {
-
-									xf.fadeTo(750, 1.0);
-									window.setTimeout(function() {
-										xf.removeClass('loading');
-									}, 50);
-
-								}
-								else
-									xf.removeClass('loading');
-
-							}, settings.carousels.fadeDelay);
-						}, 50);
-					}
-
-				// Main.
-					$t._update = function() {
-						pos = 0;
-						rightLimit = (-1 * reelWidth) + $window.width();
-						leftLimit = 0;
-						$t._updatePos();
-					};
-
-					if (skel.vars.IEVersion < 9)
-						$t._updatePos = function() { $reel.css('left', pos); };
-					else
-						$t._updatePos = function() { $reel.css('transform', 'translate(' + pos + 'px, 0)'); };
-
-				// Forward.
-					$forward
-						.appendTo($t)
-						.hide()
-						.mouseenter(function(e) {
-							timerId = window.setInterval(function() {
-								pos -= settings.carousels.speed;
-
-								if (pos <= rightLimit)
-								{
-									window.clearInterval(timerId);
-									pos = rightLimit;
-								}
-
-								$t._updatePos();
-							}, 10);
-						})
-						.mouseleave(function(e) {
-							window.clearInterval(timerId);
-						});
-
-				// Backward.
-					$backward
-						.appendTo($t)
-						.hide()
-						.mouseenter(function(e) {
-							timerId = window.setInterval(function() {
-								pos += settings.carousels.speed;
-
-								if (pos >= leftLimit) {
-
-									window.clearInterval(timerId);
-									pos = leftLimit;
-
-								}
-
-								$t._updatePos();
-							}, 10);
-						})
-						.mouseleave(function(e) {
-							window.clearInterval(timerId);
-						});
-
-				// Init.
-					$window.load(function() {
-
-						reelWidth = $reel[0].scrollWidth;
-
-						skel.on('change', function() {
-
-							if (skel.vars.touch) {
-
-								$reel
-									.css('overflow-y', 'hidden')
-									.css('overflow-x', 'scroll')
-									.scrollLeft(0);
-								$forward.hide();
-								$backward.hide();
-
-							}
-							else {
-
-								$reel
-									.css('overflow', 'visible')
-									.scrollLeft(0);
-								$forward.show();
-								$backward.show();
-
-							}
-
-							$t._update();
-
-						});
-
-						$window.resize(function() {
-							reelWidth = $reel[0].scrollWidth;
-							$t._update();
-						}).trigger('resize');
-
-					});
-
-			});
-
-	});
-
-})(jQuery);
+		lightbox.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+		lightbox.querySelector('.lightbox-prev').addEventListener('click', function () { step(-1); });
+		lightbox.querySelector('.lightbox-next').addEventListener('click', function () { step(1); });
+		lightbox.addEventListener('click', function (e) {
+			if (e.target === lightbox) closeLightbox();
+		});
+		document.addEventListener('keydown', function (e) {
+			if (!lightbox.classList.contains('open')) return;
+			if (e.key === 'Escape') closeLightbox();
+			if (e.key === 'ArrowLeft') step(-1);
+			if (e.key === 'ArrowRight') step(1);
+		});
+	}
+})();
