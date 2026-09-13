@@ -2,7 +2,7 @@
 
 ## Project Purpose
 
-Personal portfolio and CV website for António Rocha, a Senior Software Developer Engineer in Test (SDET). The site showcases professional biography, career history, skills, portfolio projects, and contact information. Hosted on GitHub Pages with a custom domain (`antoniorocha.pt`).
+Personal portfolio and CV website for António Rocha, a Senior Software Development Engineer in Test (SDET). The site showcases professional biography, career history, skills, portfolio projects, and contact information. Hosted on GitHub Pages with a custom domain (`antoniorocha.pt`).
 
 ---
 
